@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../confg/database.php';
+require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../modelo/usuario.php';
 
 class usuarioRepository {

@@ -10,8 +10,8 @@ class Livro {
 
     public function __construct(array $dados) {
         $this->id        = (int) ($dados['id_livro']        ?? 0);
-        $this->nome      =        $dados['nome_livro']       ?? '';
-        $this->genero      =   (int)     $dados['genero']       ?? '';
+        $this->nome      =       ( $dados['nome_livro']       ?? '');
+        $this->genero      =   (int)   (  $dados['genero']       ?? 0);
         $this->nota        = (int) ($dados['nota']      ?? 1);
         $this->usuarioId = (int) ($dados['usuario_id'] ?? 0);
     }
@@ -20,9 +20,10 @@ class Livro {
     public function getNome():      string { return $this->nome; }
     public function getGenero():      int { return $this->genero; }
     public function getNota():     int    { return $this->nota; }
-    public function getUsuarioId(): int    { return $this->usuarioId; }
+    public function getUsuarioId(): int    { return $this->usuarioId;}
 
-    public static function novo(string $nome, int $genero, int $nota, int $usuarioId): Livro {
+
+    public static function novo (string $nome, int $genero, int $nota, int $usuarioId): Livro {
         if ($usuarioId <= 0) {
             throw new InvalidArgumentException('Usuário inválido.');
         }
@@ -36,9 +37,11 @@ class Livro {
     public function alterarDados(string $nome, int $genero, int $nota): void {
         $nome = trim($nome);
         $genero = (int)($genero);
+        $nota = (int) $nota;
+
 
         if ($nome === '' || $genero <= 0) {
-            throw new InvalidArgumentException('Nome e genero são obrigatórios.');
+            throw new InvalidArgumentException('Nome do livro e genero são obrigatórios.');
         }
 
         if ($nota < 1 || $nota > 5) {
@@ -48,6 +51,7 @@ class Livro {
         $this->nome  = $nome;
         $this->genero  = $genero;
         $this->nota = $nota;
+
     }
 
     public function registrarIdGerado(int $id): void {

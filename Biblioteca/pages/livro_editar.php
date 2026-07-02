@@ -10,11 +10,6 @@ if (isset($_GET['id_livro'])) {
     $id = (int) $_GET['id_livro'];
 }
 
-require_once __DIR__ . '/../repository/generoRepository.php';
-
-$repoGenero = new generoRepository();
-$generos = $repoGenero->listar();
-
 $livro = null;
 if ($id > 0) {
     $livro = $repo->buscarPorId($id);
@@ -34,10 +29,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome  = trim($_POST['nome_livro'] ?? '');
     $genero  = (int)($_POST['genero'] ?? '');
     $nota = (int) ($_POST['nota'] ?? 1);
+    $autor = trim ($_POST['nome_autor'] ?? '');
 
     try {
-        $livro->alterarDados($nome, $genero, $nota);
+        $livro->alterarDados($nome, $genero, $nota, $autor);
         $repo->salvar($livro);
+
+        $repoAutor->removerAutoresLivro(
+        $livro->getId()
+       );
+
+       $novoAutor=Autor::novo($autor);
+
+       $repoAutor->salvar($novoAutor);
+
+      $repoAutor->salvarLivroAutor(
+      $livro->getId(),
+      $novoAutor->getId()
+);
 
         header('Location: index.php');
         exit;
@@ -59,7 +68,7 @@ require_once __DIR__ . '/../uploads/header.php';
 <?php endif; ?>
 
 <div class="form-card">
-  <form method="POST" action="livro_editar.php?id=<?= $livro->getId() ?>">
+  <form method="POST" action="livro_editar.php?id_livro=<?= $livro->getId() ?>">
 
     <div class="form-group">
       <label for="nome">Nome do Livro</label>
@@ -73,22 +82,39 @@ require_once __DIR__ . '/../uploads/header.php';
       />
     </div>
 
-    <div class="form-group">
-      <label for="tipo">Genero</label>
-      <select id="id_livro" name="genero" required>
-       <div class="form-group">
+     <div class="form-group">
+      <label for="nome">Nome do Autor</label>
+      <input
+        type="text"
+        id="autor"
+        name="nome_autor"
+        placeholder="Ex: Machado de Assis"
+        value="<?= htmlspecialchars($autor) ?>"
+        required
+      />
+    </div>
+
+    
+
+  <div class="form-group">
+    <label for="Genero">Genero</label>
+    <input
+        type="text"
+        id="genero"
+        name="genero"
+        placeholder="Ex: Romance"
+        required
+    >
+</div><div class="form-group">
     <label for="genero">Gênero</label>
 
     <select id="genero" name="genero" required>
-
-        <option value="">Selecione o gênero
-        </option>
 
         <?php foreach ($generos as $g): ?>
 
             <option
                 value="<?= $g['id_genero'] ?>"
-                <?= $g['id_genero'] == $genero ? 'selected' : '' ?>
+                <?= ($g['id_genero'] == $genero) ? 'selected' : '' ?>
             >
                 <?= htmlspecialchars($g['nome_genero']) ?>
             </option>

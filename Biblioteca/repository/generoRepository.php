@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../confg/database.php';
+require_once __DIR__ . '/../config/database.php';
 
 class generoRepository {
 
@@ -17,7 +17,29 @@ class generoRepository {
             FROM genero
             ORDER BY nome_genero
         ");
-
-        return $stmt->fetchAll();
+            return $stmt->fetchAll();
     }
+
+    public function buscarPorId(int $id): ?array {
+    $stmt = $this->pdo->prepare("
+        SELECT *
+        FROM genero
+        WHERE id_genero = :id
+        LIMIT 1
+    ");
+
+    $stmt->execute([
+        ':id' => $id
+    ]);
+
+    $dados = $stmt->fetch();
+
+    if (!$dados) {
+        return null;
+    }
+
+    return $dados;
+}     
+
+
 }

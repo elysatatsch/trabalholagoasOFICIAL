@@ -21,6 +21,10 @@ if ($livro === null || $livro->getUsuarioId() !== $_SESSION['usuario_id']) {
     exit;
 }
 
+$repoAutor->removerAutoresLivro(
+$livro->getId()
+);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $repo->excluir($livro->getId());
     header('Location: index.php');
@@ -44,7 +48,7 @@ require_once __DIR__ . '/../uploads/header.php';
     Esta ação não pode ser desfeita.
   </p>
 
-  <form method="POST" action="livro_delete.php?id=<?= $livro->getId() ?>">
+  <form method="POST" action="livro_delete.php?id_livro=<?= $livro->getId() ?>">
     <div class="form-actions">
       <button type="submit" class="btn btn-excluir">Sim, excluir</button>
       <a href="index.php" class="btn btn-ghost">Cancelar</a>

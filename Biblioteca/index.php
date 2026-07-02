@@ -6,12 +6,12 @@ require_once __DIR__ . '/../repository/livroRepository.php';
 $repo     = new livroRepository();
 $livros = $repo->listarPorUsuario($_SESSION['usuario_id']);
 
-require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../uploads/header.php';
 ?>
 
 <div class="page-header">
   <h2>Meus Livros</h2>
-  <a href="livros_create.php" class="btn btn-primary">+ Novo Livro</a>
+  <a href="livro_create.php" class="btn btn-primary">+ Novo Livro</a>
 </div>
 
 <?php if (empty($livros)): ?>
@@ -39,7 +39,7 @@ require_once __DIR__ . '/../includes/header.php';
             <td><span class="badge badge-tipo"><?= htmlspecialchars($livro->getGenero()) ?></span></td>
             <td>Lv. <?= $livro->getNota() ?></td>
             <td class="acoes">
-              <a href="livro_edit.php?id=<?= $livro->getId() ?>" class="btn btn-sm btn-editar">Editar</a>
+              <a href="livro_editar.php?id=<?= $livro->getId() ?>" class="btn btn-sm btn-editar">Editar</a>
               <a href="livro_delete.php?id=<?= $livro->getId() ?>" class="btn btn-sm btn-excluir">Excluir</a>
             </td>
           </tr>
@@ -49,4 +49,4 @@ require_once __DIR__ . '/../includes/header.php';
   </div>
 <?php endif; ?>
 
-<?php require_once __DIR__ . '/../includes/footer.php'; ?>
+<?php require_once __DIR__ . '/../uploads/footer.php'; ?>

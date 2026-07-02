@@ -6,23 +6,39 @@ require_once __DIR__ . '/../repository/generoRepository.php';
 
 $repo = new LivroRepository();
 
+$repoAutor = new autorRepository();
+$autor = $repoAutor->Listar();
+
+$repoGenero = new generoRepository();
+$generos = $repoGenero->listar();
+
+
+
 $erro = '';
 $nome = '';
 $genero = '';
 $nota = 1;
+$autor ='';
 
-$repoGenero = new generoRepository();
 
-$generos = $repoGenero->listar();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome  = trim($_POST['nome_livro'] ?? '');
     $genero  = (int)($_POST['genero'] ?? '');
     $nota = (int) ($_POST['nota'] ?? 1);
+    $autor = trim($_POST['nome_autor'] ?? '');
 
     try {
-        $livro = Livro ::novo($nome, $genero, $nota, $_SESSION['usuario_id']);
+        $livro = Livro ::novo($nome, $genero, $nota, $_SESSION['usuario_id'], $autor);
         $repo->salvar($livro);
+
+        $novoAutor = Autor::novo($autor);
+        $repoAutor->salvar($novoAutor);
+
+        $repoAutor->salvarLivroAutor(
+        $livro->getId(),
+        $novoAutor->getId()
+);
 
         header('Location: index.php');
         exit;
@@ -31,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../uploads/header.php';
 ?>
 
 <div class="page-header">
@@ -58,19 +74,30 @@ require_once __DIR__ . '/../includes/header.php';
       />
     </div>
 
+    <div class="form-group">
+      <label for="autor">Autor</label>
+      <input
+        type="text"
+        id="autor"
+        name="nome_autor"
+        placeholder="Ex: Machado de Assis"
+        value="<?= htmlspecialchars($autor) ?>"
+        required
+      />
+    </div>
+
 <div class="form-group">
     <label for="genero">Gênero</label>
 
     <select id="genero" name="genero" required>
 
-        <option value="">Selecione um gênero</option>
-
         <?php foreach ($generos as $g): ?>
 
-            <option value="<?= $g['id_genero'] ?>">
-
+            <option
+                value="<?= $g['id_genero'] ?>"
+                <?= ($g['id_genero'] == $genero) ? 'selected' : '' ?>
+            >
                 <?= htmlspecialchars($g['nome_genero']) ?>
-
             </option>
 
         <?php endforeach; ?>
@@ -99,4 +126,4 @@ require_once __DIR__ . '/../includes/header.php';
   </form>
 </div>
 
-<?php require_once __DIR__ . '/../includes/footer.php'; ?>
+<?php require_once __DIR__ . '/../uploads/footer.php'; ?>

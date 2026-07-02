@@ -18,8 +18,10 @@ CREATE TABLE IF NOT EXISTS usuario (
     email     VARCHAR(150) NOT NULL,
     senha     CHAR(64)     NOT NULL COMMENT 'Hash 1234567 da senha',
     criado_em DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    capa VARCHAR,
     PRIMARY KEY (id_usuario),
-    UNIQUE KEY uq_email (email)
+    UNIQUE KEY uq_email (email),
+capa string
 ) ENGINE=InnoDB;
 
 -- ------------------------------------------------------------

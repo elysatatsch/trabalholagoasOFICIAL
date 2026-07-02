@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../confg/database.php';
+require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../modelo/livro.php';
 
 class livroRepository {
@@ -12,19 +12,16 @@ class livroRepository {
     }
 
     /** @return Livro[] */
+    
     public function listarPorUsuario(int $usuarioId): array {
         $stmt = $this->pdo->prepare(
-     'SELECT
-    l.id_livro,
-    l.nome_livro,
-    g.nome_genero AS genero,
-    l.nota,
-    l.usuario_id
-FROM livro l, genero g
-WHERE l.genero = g.id_genero and l.usuario_id = :uid
-ORDER BY l.nome_livro;'
+    'SELECT l.id_livro, l.nome_livro, g.nome_genero,l.genero, l.nota, l.usuario_id
+    FROM livro l, genero g
+    WHERE l.genero = g.id_genero and l.usuario_id = :uid_livro
+    ORDER BY l.nome_livro;'
         );
-        $stmt->execute([':uid' => $usuarioId]);
+
+        $stmt->execute([':uid_livro' => $usuarioId]);
         $lista = [];
         foreach ($stmt->fetchAll() as $dados) {
             $lista[] = new Livro($dados);
@@ -50,7 +47,7 @@ ORDER BY l.nome_livro;'
                 'UPDATE livro SET nome_livro = :nome_livro, genero = :genero, nota = :nota WHERE id_livro = :id_livro'
             );
             $stmt->execute([
-                ':nome'  => $livro->getNome(),
+                ':nome_livro'  => $livro->getNome(),
                 ':genero'  => $livro->getGenero(),
                 ':nota' => $livro->getNota(),
                 ':id_livro'    => $livro->getId(),
@@ -63,13 +60,13 @@ ORDER BY l.nome_livro;'
         }
 
         $stmt = $this->pdo->prepare(
-            'INSERT INTO livro (nome_livro, genero, nota, usuario_id) VALUES (:nome, :genero, :nota, :uid)'
+            'INSERT INTO livro (nome_livro, genero, nota, usuario_id) VALUES (:nome, :genero, :nota, :uid_livro)'
         );
         $stmt->execute([
             ':nome'  => $livro->getNome(),
             ':genero'  => $livro->getGenero(),
             ':nota' => $livro->getNota(),
-            ':uid_livro'   => $livro->getUsuarioId(),
+            ':uid_livro'   => $livro->getUsuarioId()
         ]);
 
         $livro->registrarIdGerado((int) $this->pdo->lastInsertId());
@@ -88,7 +85,7 @@ ORDER BY l.nome_livro;'
         }
 
         $livro->alterarDados($nome, $genero, $nota);
-        $this->salvar($livro);
+        $this->salvar($livro);  
     }
 
     public function excluir(int $id): void {
