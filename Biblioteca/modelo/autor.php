@@ -14,7 +14,7 @@ class Autor {
         return $this->id;
     }
 
-    public function getNome(): string {
+    public function getNomeAutor(): string {
         return $this->nome;
     }
 

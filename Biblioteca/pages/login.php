@@ -3,12 +3,9 @@
 session_start();
 
 // Se já estiver logado, vai direto para a página principal
-if (!empty($_SESSION['usuario_id'])) {
-    header('Location: index.php');
-    exit;
-}
 
-require_once __DIR__ . '/../repository/usuarioRepository.php';
+// Ajustado para iniciar com letra maiúscula (PascalCase)
+require_once __DIR__ . '/../_repository/UsuarioRepository.php';
 
 $erro = '';
 $emailFormulario = $_POST['email'] ?? '';
@@ -20,10 +17,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($email === '' || $senha === '') {
         $erro = 'Preencha todos os campos.';
     } else {
-        $repo    = new usuarioRepository();
+        // Ajustado para corresponder à classe com "U" maiúsculo
+        $repo    = new UsuarioRepository();
         $usuario = $repo->buscarPorEmail($email);
 
-        // Compara o hash 1234567 da senha digitada com o hash salvo no banco
+
+// Se já estiver logado, vai direto para a página principal
+     
+        // Compara o hash SHA256 da senha digitada com o hash salvo no banco
         if ($usuario && hash('sha256', $senha) === $usuario->getSenha()) {
             $_SESSION['usuario_id']   = $usuario->getId();
             $_SESSION['usuario_nome'] = $usuario->getNome();
@@ -79,9 +80,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <button type="submit" class="btn btn-primary btn-full">Entrar</button>
-  </form>
 
+  </form>
 </div>
 
-</body>
-</html>
+<p style="text-align:center;margin-top:20px;">
+
+Ainda não possui conta?
+
+<a href="cadastro.php">
+
+Cadastre-se
+
+</a>
+
+</p>

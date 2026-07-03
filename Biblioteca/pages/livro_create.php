@@ -1,16 +1,17 @@
 <?php
 
-require_once __DIR__ . '/../uploads/auth.php';
-require_once __DIR__ . '/../repository/livroRepository.php';
-require_once __DIR__ . '/../repository/generoRepository.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../_repository/LivroRepository.php';
+require_once __DIR__ . '/../_repository/GeneroRepository.php';
+require_once __DIR__ . '/../_repository/AutorRepository.php';
+require_once __DIR__ . '/../modelo/livro.php';
+require_once __DIR__ . '/../modelo/autor.php';
 
 $repo = new LivroRepository();
 
-$repoAutor = new autorRepository();
-$autor = $repoAutor->Listar();
-
-$repoGenero = new generoRepository();
+$repoGenero = new GeneroRepository();
 $generos = $repoGenero->listar();
+$repoAutor = new AutorRepository();
 
 
 
@@ -18,36 +19,72 @@ $erro = '';
 $nome = '';
 $genero = '';
 $nota = 1;
-$autor ='';
-
-
+$autorDigitado = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nome  = trim($_POST['nome_livro'] ?? '');
-    $genero  = (int)($_POST['genero'] ?? '');
-    $nota = (int) ($_POST['nota'] ?? 1);
-    $autor = trim($_POST['nome_autor'] ?? '');
+    $nome          = trim($_POST['nome_livro'] ?? '');
+    $genero        = (int)($_POST['genero'] ?? 0);
+    $nota          = (int)($_POST['nota'] ?? 1);
+    $autorDigitado = trim($_POST['nome_autor'] ?? '');
+
+    $nome_arquivo_salvo = null;
 
     try {
-        $livro = Livro ::novo($nome, $genero, $nota, $_SESSION['usuario_id'], $autor);
+        if ($autorDigitado === '') {
+            throw new InvalidArgumentException("O nome do autor é obrigatório.");
+        }
+
+        // --- 1. UPLOAD DA IMAGEM DA CAPA ---
+        if (isset($_FILES['capa']) && $_FILES['capa']['error'] === UPLOAD_ERR_OK) {
+            $fileTmpPath = $_FILES['capa']['tmp_name'];
+            $fileName    = $_FILES['capa']['name'];
+            $fileSize    = $_FILES['capa']['size'];
+            
+            $extensao = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+            $extensoes_permitidas = ['jpg', 'jpeg', 'png', 'webp'];
+            $tamanho_maximo = 2 * 1024 * 1024; // 2MB
+
+            if (!in_array($extensao, $extensoes_permitidas)) {
+                throw new InvalidArgumentException("Apenas formatos JPG, PNG e WEBP são aceitos.");
+            }
+            
+            if ($fileSize > $tamanho_maximo) {
+                throw new InvalidArgumentException("A imagem não pode ser maior que 2MB.");
+            }
+
+            $nome_arquivo_salvo = uniqid() . '.' . $extensao;
+            $diretorio_destino  = __DIR__ . '/../uploads/' . $nome_arquivo_salvo;
+              
+                if (!move_uploaded_file($fileTmpPath, $diretorio_destino)) {
+                throw new RuntimeException("Erro ao salvar o arquivo de imagem.");
+            }
+        } else {
+            throw new InvalidArgumentException("O envio da imagem da capa é obrigatório.");
+        }
+
+        // --- 2. SALVAR O AUTOR DIGITADO (Cria um novo sempre) ---
+        $novoAutor = Autor::novo($autorDigitado);
+        $repoAutor->salvar($novoAutor);
+        $autorId = $novoAutor->getId(); // ID recém-gerado pelo banco
+
+        // --- 3. SALVAR O LIVRO VINCULADO AO AUTOR ---
+        // Passamos o ID do novo autor dentro do array para alimentar o relacionamento N:N
+        $livro = Livro::novo($nome, $genero, $nota, $_SESSION['usuario_id'], $nome_arquivo_salvo, [$autorId]);
         $repo->salvar($livro);
 
-        $novoAutor = Autor::novo($autor);
-        $repoAutor->salvar($novoAutor);
-
-        $repoAutor->salvarLivroAutor(
-        $livro->getId(),
-        $novoAutor->getId()
-);
-
-        header('Location: index.php');
+        header('Location: index.php?sucesso=1');
         exit;
-    } catch (InvalidArgumentException $e) {
+
+    } catch (Exception $e) {
         $erro = $e->getMessage();
+        // Remove a imagem caso algo falhe depois de salvá-la na pasta
+        if ($nome_arquivo_salvo && file_exists(__DIR__ . '/../uploads/' . $nome_arquivo_salvo)) {
+            unlink(__DIR__ . 'C:\xampp2\htdocs\Biblioteca\uploads' . $nome_arquivo_salvo);
+        }
     }
 }
 
-require_once __DIR__ . '/../uploads/header.php';
+require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="page-header">
@@ -56,11 +93,11 @@ require_once __DIR__ . '/../uploads/header.php';
 </div>
 
 <?php if ($erro !== ''): ?>
-  <div class="alert alert-erro"><?= htmlspecialchars($erro) ?></div>
+  <div class="alert alert-erro" style="color: red; font-weight: bold; margin-bottom: 15px;"><?= htmlspecialchars($erro) ?></div>
 <?php endif; ?>
 
 <div class="form-card">
-  <form method="POST" action="livro_create.php">
+  <form method="POST" action="livro_create.php" enctype="multipart/form-data">
 
     <div class="form-group">
       <label for="nome">Nome do Livro</label>
@@ -68,7 +105,7 @@ require_once __DIR__ . '/../uploads/header.php';
         type="text"
         id="nome"
         name="nome_livro"
-        placeholder="Ex: Suicidas"
+        placeholder="Ex: O Iluminado"
         value="<?= htmlspecialchars($nome) ?>"
         required
       />
@@ -80,30 +117,26 @@ require_once __DIR__ . '/../uploads/header.php';
         type="text"
         id="autor"
         name="nome_autor"
-        placeholder="Ex: Machado de Assis"
-        value="<?= htmlspecialchars($autor) ?>"
+        placeholder="Ex: Stephen King"
+        value="<?= htmlspecialchars($autorDigitado) ?>"
         required
       />
     </div>
 
-<div class="form-group">
-    <label for="genero">Gênero</label>
-
-    <select id="genero" name="genero" required>
-
-        <?php foreach ($generos as $g): ?>
-
-            <option
-                value="<?= $g['id_genero'] ?>"
-                <?= ($g['id_genero'] == $genero) ? 'selected' : '' ?>
-            >
-                <?= htmlspecialchars($g['nome_genero']) ?>
-            </option>
-
-        <?php endforeach; ?>
-
-    </select>
-</div>
+    <div class="form-group">
+        <label for="genero">Gênero</label>
+        <select id="genero" name="genero" required>
+            <option value="">Selecione um gênero...</option>
+            <?php foreach ($generos as $g): ?>
+                <option
+                    value="<?= $g['id_genero'] ?>"
+                    <?= ($g['id_genero'] == $genero) ? 'selected' : '' ?>
+                >
+                    <?= htmlspecialchars($g['nome_genero']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
 
     <div class="form-group">
       <label for="nota">Nota (1 – 5)</label>
@@ -118,6 +151,17 @@ require_once __DIR__ . '/../uploads/header.php';
       />
     </div>
 
+    <div class="form-group">
+      <label for="capa">Capa do Livro (JPG, PNG ou WEBP - Máx: 2MB)</label>
+      <input
+        type="file"
+        id="capa"
+        name="capa"
+        accept=".jpg,.jpeg,.png,.webp"
+        required
+      />
+    </div>
+
     <div class="form-actions">
       <button type="submit" class="btn btn-primary">Cadastrar Livro</button>
       <a href="index.php" class="btn btn-ghost">Cancelar</a>
@@ -126,4 +170,4 @@ require_once __DIR__ . '/../uploads/header.php';
   </form>
 </div>
 
-<?php require_once __DIR__ . '/../uploads/footer.php'; ?>
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>
