@@ -2,7 +2,7 @@
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <p>PokéCRUD &copy; <?= date('Y') ?></p>
+    <p>Biblioteca &copy; <?= date('Y') ?></p>
   </div>
 </footer>
 
