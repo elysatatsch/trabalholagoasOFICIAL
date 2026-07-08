@@ -2,12 +2,13 @@
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../_repository/LivroRepository.php';
 require_once __DIR__ . '/../_repository/UsuarioRepository.php';
+require_once __DIR__ . '/../_repository/AutorRepository.php';
 
 $usuarioRepo = new UsuarioRepository();
 $livroRepo = new LivroRepository();
+$autorRepo = new AutorRepository();
 
 
-// Busca apenas os livros do usuário que está logado na sessão
 $livros = $livroRepo->listarPorUsuario($_SESSION['usuario_id']);
 
 require_once __DIR__ . '/../includes/header.php';
@@ -19,9 +20,9 @@ require_once __DIR__ . '/../includes/header.php';
             <h2>Meus Livros</h2>
             <p>Bem-vindo de volta, <strong><?= htmlspecialchars($_SESSION['usuario_nome']) ?></strong>!</p>
         </div>
-        <a href="livro_create.php" class="btn btn-primary">+ Novo Livro</a>
+        <a href="livro_create.php" class="btn btn-primary">Novo Livro</a>
 
-        <a href="logoout.php" class="btn btn-secundary"> Deslogar</a>
+        <a href="logoout.php" class="btn btn-secundary">Deslogar</a>
     
     </div>
 
@@ -42,16 +43,18 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
     <?php else: ?>
         <div class="books-grid">
-            <?php foreach ($livros as $livro): 
-                // Busca o autor vinculado a este livro específico
-                $nomeAutor = !empty($autores)
-                ?$autores[0]['nome_autor']
-                : 'Autor desconhecido';
-            ?>
+           <?php foreach ($livros as $livro):
+
+            $autores = $autorRepo->buscarAutoresLivro($livro->getId());
+            $nomeAutor = !empty($autores)
+            ? $autores[0]->getNome()
+            : 'Autor desconhecido';
+?>
+            
                 <div class="book-card">
                     <div class="book-cover">
                         <?php if ($livro->getCapa()): ?>
-                            <img src="../public/uploads/<?= htmlspecialchars($livro->getCapa()) ?>" alt="Capa de <?= htmlspecialchars($livro->getNome()) ?>">
+                            <img src="../uploads/<?= htmlspecialchars($livro->getCapa()) ?>" alt="Capa de <?= htmlspecialchars($livro->getNome()) ?>">
                         <?php else: ?>
                             <div class="no-cover">Sem Capa</div>
                         <?php endif; ?>

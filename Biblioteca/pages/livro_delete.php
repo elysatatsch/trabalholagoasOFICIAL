@@ -19,18 +19,18 @@ if ($id > 0) {
     $livro = $repo->buscarPorId($id);
 }
 
-// Livro não encontrado ou não pertence ao usuário logado
+
 if ($livro === null || $livro->getUsuarioId() !== $_SESSION['usuario_id']) {
     header('Location: index.php');
     exit;
 }
 
-// O bloco abaixo só deve processar se o formulário de confirmação for enviado (POST)
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // 1. Remove os vínculos do livro com os autores na tabela intermediária
+    
     $repoAutor->removerAutoresLivro($livro->getId());
 
-    // 2. Apaga o arquivo físico da capa na pasta uploads, caso ele exista
+    
     if ($livro->getCapa()) {
         $caminhoCapa = __DIR__ . '/../uploads/' . $livro->getCapa();
         if (file_exists($caminhoCapa)) {
@@ -38,7 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // 3. Exclui o registro do livro no banco de dados
     $repo->excluir($livro->getId());
     
     header('Location: index.php?excluido=1');

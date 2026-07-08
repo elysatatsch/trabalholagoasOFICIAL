@@ -7,8 +7,7 @@ class Usuario {
     private string $senha;
     private string $email;
     private string $criadoEm;
-    private ?string $capa; // Alterado para ?string (pode ser nulo)
-
+    private ?string $capa; 
     public function __construct(array $dados) {
         $this->id       = (int) ($dados['id_usuario'] ?? 0);
         $this->nome     =        ($dados['nome']       ?? '');
@@ -25,9 +24,8 @@ class Usuario {
     public function getCriadoEm(): string  { return $this->criadoEm; }
     public function getCapa():     ?string { return $this->capa; }
 
-    /**
-     * Método fábrica para criar um novo usuário (ex: no formulário de cadastro)
-     */
+
+     
     public static function novo(string $nome, string $email, string $senha, ?string $capa = null): Usuario {
         $nome = trim($nome);
         $email = trim($email);
@@ -44,8 +42,7 @@ class Usuario {
             throw new InvalidArgumentException('A senha deve ter pelo menos 6 caracteres.');
         }
 
-        // Criptografa a senha usando o algoritmo seguro padrão do PHP (bcrypt)
-        // Nota: No seu banco está SHA2, mas password_hash é o padrão de mercado para PHP puro!
+        
        $senhaHash = hash('sha256', $senha);
 
         return new Usuario([

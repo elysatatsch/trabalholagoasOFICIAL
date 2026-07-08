@@ -39,7 +39,7 @@ class AutorRepository {
         );
 
         $stmt->execute([
-            ':nome' => $autor->getNome()
+            ':nome' => $autor->getNomeAutor()
         ]);
 
         $autor->registrarIdGerado(
@@ -80,18 +80,14 @@ class AutorRepository {
         return new Autor($dados);
     }           
 
-    /**
-     * Busca os autores vinculados a um livro específico usando INNER JOIN
-     */
     public function buscarAutoresLivro(int $livroId): array
     {
         $stmt = $this->pdo->prepare("
             SELECT 
                 a.id_autor,
                 a.nome_autor
-            FROM autor a
-            INNER JOIN livro_autor la ON a.id_autor = la.autor_id
-            WHERE la.livro_id = :livro
+            FROM autor a, livro_autor la
+            WHERE a.id_autor = la.autor_id and la.livro_id = :livro
             ORDER BY a.nome_autor
         ");
 

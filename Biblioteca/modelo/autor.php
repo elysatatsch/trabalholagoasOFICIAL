@@ -32,4 +32,9 @@ class Autor {
         $this->id = $id;
     }
 
+    public function getNome(): string
+{
+    return $this->nome;
+}
+
     }

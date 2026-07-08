@@ -13,12 +13,11 @@ class LivroRepository {
 
     /** @return Livro[] */
     public function listarPorUsuario(int $usuarioId): array {
-        // Ajustado para INNER JOIN explicito e inclusão da coluna capa
+       
         $stmt = $this->pdo->prepare(
             'SELECT l.id_livro, l.nome_livro, l.genero, l.nota, l.usuario_id, l.capa
-             FROM livro l
-             INNER JOIN genero g ON l.genero = g.id_genero
-             WHERE l.usuario_id = :uid_livro
+             FROM livro l, genero g
+             WHERE l.genero = g.id_genero and l.usuario_id = :uid_livro
              ORDER BY l.nome_livro;'
         );
 
@@ -37,7 +36,7 @@ class LivroRepository {
         $dados = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($dados) {
-            // Antes de retornar, precisamos buscar os IDs dos autores vinculados a este livro
+          
             $stmtAutores = $this->pdo->prepare('SELECT autor_id FROM livro_autor WHERE livro_id = :id');
             $stmtAutores->execute([':id' => $id]);
             $dados['autores_ids'] = $stmtAutores->fetchAll(PDO::FETCH_COLUMN);
@@ -63,7 +62,6 @@ class LivroRepository {
                 ':id_livro'   => $livro->getId(),
             ]);
 
-            // Atualiza relacionamento N:N (Limpa os antigos e insere os atuais)
             $stmtDel = $this->pdo->prepare('DELETE FROM livro_autor WHERE livro_id = :id');
             $stmtDel->execute([':id' => $livro->getId()]);
 
@@ -71,7 +69,6 @@ class LivroRepository {
             return;
         }
 
-        // OPERAÇÃO DE INSERT
         if ($livro->getUsuarioId() <= 0) {
             throw new InvalidArgumentException('Usuário inválido.');
         }
@@ -91,11 +88,9 @@ class LivroRepository {
         $livroIdGerado = (int) $this->pdo->lastInsertId();
         $livro->registrarIdGerado($livroIdGerado);
 
-        // Salva os autores na tabela intermediária
         $this->salvarAutoresVinculados($livroIdGerado, $livro->getAutoresIds());
     }
 
-    // Método auxiliar privado para automatizar a gravação na tabela intermediária
     private function salvarAutoresVinculados(int $livroId, array $autoresIds): void {
         if (empty($autoresIds)) return;
 
@@ -111,7 +106,6 @@ class LivroRepository {
         }
     }
 
-    // Métodos simplificados para a camada de visualização (Controller/Views)
     public function inserir(string $nome, int $genero, int $nota, int $usuarioId, ?string $capa = null, array $autoresIds = []): void {
         $livro = Livro::novo($nome, $genero, $nota, $usuarioId, $capa, $autoresIds);
         $this->salvar($livro);

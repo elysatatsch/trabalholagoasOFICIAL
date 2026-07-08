@@ -18,11 +18,11 @@ body {
 .login-body {
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    background: linear-gradient(135deg, rgb(19, 97, 58) 0%, #2a9877ff 100%);
 }
 
 .login-card {
-    background: #ffffff;
+    background: #f3f3f3;
     padding: 40px;
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
@@ -34,7 +34,7 @@ body {
     font-size: 24px;
     font-weight: bold;
     text-align: center;
-    color: #1e3c72;
+    color: #2a9877ff 100%;
     margin-bottom: 10px;
     letter-spacing: 2px;
 }
@@ -73,7 +73,7 @@ body {
 }
 
 .page-header h2 {
-    color: #1e3c72;
+    color: #2a9877ff 100%;
     font-size: 28px;
 }
 
@@ -104,7 +104,7 @@ body {
 }
 
 .form-group input:focus, .form-group select:focus {
-    border-color: #2a5298;
+    border-color: #2a9877ff 100%;
     outline: none;
 }
 
@@ -122,12 +122,12 @@ body {
 }
 
 .btn-primary {
-    background-color: #1e3c72;
+    background-color: #2a9877ff 100%;
     color: #fff;
 }
 
 .btn-primary:hover {
-    background-color: #2a5298;
+    background-color: #114726;
 }
 
 .btn-secondary {
@@ -148,7 +148,7 @@ body {
 
 .btn-excluir {
     background-color: #e53e3e;
-    color: #fff;
+    color: #00502b;
 }
 
 .btn-excluir:hover {

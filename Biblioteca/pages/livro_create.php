@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new InvalidArgumentException("O nome do autor é obrigatório.");
         }
 
-        // --- 1. UPLOAD DA IMAGEM DA CAPA ---
+        //  IMAGEM DA CAPA 
         if (isset($_FILES['capa']) && $_FILES['capa']['error'] === UPLOAD_ERR_OK) {
             $fileTmpPath = $_FILES['capa']['tmp_name'];
             $fileName    = $_FILES['capa']['name'];
@@ -62,13 +62,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new InvalidArgumentException("O envio da imagem da capa é obrigatório.");
         }
 
-        // --- 2. SALVAR O AUTOR DIGITADO (Cria um novo sempre) ---
+      
         $novoAutor = Autor::novo($autorDigitado);
         $repoAutor->salvar($novoAutor);
-        $autorId = $novoAutor->getId(); // ID recém-gerado pelo banco
+        $autorId = $novoAutor->getId(); 
+        
 
-        // --- 3. SALVAR O LIVRO VINCULADO AO AUTOR ---
-        // Passamos o ID do novo autor dentro do array para alimentar o relacionamento N:N
+       
         $livro = Livro::novo($nome, $genero, $nota, $_SESSION['usuario_id'], $nome_arquivo_salvo, [$autorId]);
         $repo->salvar($livro);
 
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     } catch (Exception $e) {
         $erro = $e->getMessage();
-        // Remove a imagem caso algo falhe depois de salvá-la na pasta
+       
         if ($nome_arquivo_salvo && file_exists(__DIR__ . '/../uploads/' . $nome_arquivo_salvo)) {
             unlink(__DIR__ . 'C:\xampp2\htdocs\Biblioteca\uploads' . $nome_arquivo_salvo);
         }

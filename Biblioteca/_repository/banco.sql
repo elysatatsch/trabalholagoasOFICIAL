@@ -20,7 +20,6 @@ CREATE TABLE IF NOT EXISTS usuario (
     criado_em DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id_usuario),
     UNIQUE KEY uq_email (email),
-capa string
 ) ENGINE=InnoDB;
 
 -- ------------------------------------------------------------
@@ -55,6 +54,15 @@ create table IF NOT EXISTS livro_autor(
     autor_id int,
     FOREIGN KEY (livro_id) REFERENCES livro(id_livro) ON DELETE CASCADE,
     FOREIGN KEY (autor_id) REFERENCES autor(id_autor) ON DELETE CASCADE  
+)ENGINE=InnoDB;
+
+create table IF NOT EXISTS tropes(
+    tropes varchar(200),
+    id_trope int primary KEY,
+    livro_id int,
+    genero_id int,
+    FOREIGN KEY (livro_id) REFERENCES livro(id_livro) ON DELETE CASCADE,
+    FOREIGN KEY (genero_id) REFERENCES genero(id_genero) ON DELETE CASCADE  
 )ENGINE=InnoDB;
 
 

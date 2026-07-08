@@ -31,7 +31,7 @@ $nome = $livro->getNome();
 $genero = $livro->getGenero();
 $nota = $livro->getNota();
 
-// Carrega o nome do autor atual para preencher o formulário no GET
+
 $autoresDoLivro = $repoAutor->buscarAutoresLivro($livro->getId());
 $autorNomeAtual = !empty($autoresDoLivro) ? $autoresDoLivro[0]->getNome() : '';
 
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nota   = (int) ($_POST['nota'] ?? 1);
     $autorNomeDigitado = trim($_POST['nome_autor'] ?? '');
 
-    // Mantém a capa atual por padrão
+    
     $nome_arquivo_salvo = $livro->getCapa(); 
 
     try {
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new InvalidArgumentException("O nome do autor é obrigatório.");
         }
 
-        // --- TRATAMENTO DO UPLOAD DE IMAGEM (OPCIONAL NA EDIÇÃO) ---
+       
         if (isset($_FILES['capa']) && $_FILES['capa']['error'] === UPLOAD_ERR_OK) {
             $fileTmpPath = $_FILES['capa']['tmp_name'];
             $fileName    = $_FILES['capa']['name'];
@@ -67,12 +67,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new InvalidArgumentException("A nova imagem não pode ser maior que 2MB.");
             }
 
-            // Se der tudo certo, gera o arquivo novo
+          
             $novo_nome = uniqid() . '.' . $extensao;
             $diretorio_destino = __DIR__ . '/../uploads/' . $novo_nome;
 
             if (move_uploaded_file($fileTmpPath, $diretorio_destino)) {
-                // Se existia uma capa antiga, apaga o arquivo físico dela do servidor
                 if ($livro->getCapa()) {
                     $antigaCapa = __DIR__ . '/../uploads/' . $livro->getCapa();
                     if (file_exists($antigaCapa)) {
@@ -83,16 +82,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // --- SALVAR NOVO AUTOR (Aceitando repetição) ---
         $novoAutor = Autor::novo($autorNomeDigitado);
         $repoAutor->salvar($novoAutor);
         $autorId = $novoAutor->getId();
 
-        // --- ATUALIZAR ENTIDADE LIVRO ---
-        // Passamos o novo nome de arquivo e o array contendo o ID do novo autor criado
+       
         $livro->alterarDados($nome, $genero, $nota, $nome_arquivo_salvo, [$autorId]);
         
-        // O salvar() do LivroRepository já cuidará do UPDATE e do reflesh na tabela livro_autor
+        
         $repo->salvar($livro);
 
         header('Location: index.php?editado=1');

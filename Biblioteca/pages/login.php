@@ -2,9 +2,6 @@
 
 session_start();
 
-// Se já estiver logado, vai direto para a página principal
-
-// Ajustado para iniciar com letra maiúscula (PascalCase)
 require_once __DIR__ . '/../_repository/UsuarioRepository.php';
 
 $erro = '';
@@ -17,14 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($email === '' || $senha === '') {
         $erro = 'Preencha todos os campos.';
     } else {
-        // Ajustado para corresponder à classe com "U" maiúsculo
+       
         $repo    = new UsuarioRepository();
         $usuario = $repo->buscarPorEmail($email);
 
 
-// Se já estiver logado, vai direto para a página principal
-     
-        // Compara o hash SHA256 da senha digitada com o hash salvo no banco
         if ($usuario && hash('sha256', $senha) === $usuario->getSenha()) {
             $_SESSION['usuario_id']   = $usuario->getId();
             $_SESSION['usuario_nome'] = $usuario->getNome();
