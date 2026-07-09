@@ -84,7 +84,7 @@ class LivroRepository {
             ':uid_livro' => $livro->getUsuarioId(),
             ':capa'      => $livro->getCapa()
         ]);
-
+    
         $livroIdGerado = (int) $this->pdo->lastInsertId();
         $livro->registrarIdGerado($livroIdGerado);
 
@@ -123,8 +123,7 @@ class LivroRepository {
     }
 
     public function excluir(int $id): void {
-        // Como no SQL usamos ON DELETE CASCADE na tabela livro_autor, 
-        // deletar o livro removerá automaticamente os vínculos na tabela intermediária.
+       
         $stmt = $this->pdo->prepare('DELETE FROM livro WHERE id_livro = :id_livro');
         $stmt->execute([':id_livro' => $id]);
     }

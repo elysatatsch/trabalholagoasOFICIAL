@@ -10,23 +10,6 @@
 
 <header class="site-header">
   <div class="header-inner">
-    <a href="../pages/index.php" class="logo">Biblioteca</a>
-
-    <nav class="nav">
-      <a href="../pages/index.php">Meus Livros</a>
-      <a href="../pages/livro_create.php">+ Novo Livro</a>
-    </nav>
-
-    <div class="header-user">
-      <?php
-        $nomeUser = $_SESSION['usuario_nome'] ?? 'Usuário';
-      ?>
-      <span class="user-name">
-        <?= htmlspecialchars($nomeUser) ?>
-      </span>
-      <a href="../pages/logout.php" class="btn-logout">Sair</a>
-    </div>
-  </div>
-</header>
+ <h1 class="titulo-pagina">Minha Biblioteca</h1>
 
 <main class="container">

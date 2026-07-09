@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $genero        = (int)($_POST['genero'] ?? 0);
     $nota          = (int)($_POST['nota'] ?? 1);
     $autorDigitado = trim($_POST['nome_autor'] ?? '');
+    $status = $_POST['status'] ?? 'quero_ler';
 
     $nome_arquivo_salvo = null;
 
@@ -88,9 +89,12 @@ require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="page-header">
+  
   <h2>Novo Livro</h2>
   <a href="index.php" class="btn btn-ghost">← Voltar</a>
 </div>
+
+<div class="form-group">
 
 <?php if ($erro !== ''): ?>
   <div class="alert alert-erro" style="color: red; font-weight: bold; margin-bottom: 15px;"><?= htmlspecialchars($erro) ?></div>

@@ -15,10 +15,13 @@ require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="dashboard-container">
+
+
+
     <div class="page-header">
         <div>
             <h2>Meus Livros</h2>
-            <p>Bem-vindo de volta, <strong><?= htmlspecialchars($_SESSION['usuario_nome']) ?></strong>!</p>
+            <p>Bem-vindo, <strong><?= htmlspecialchars($_SESSION['usuario_nome']) ?></strong>!</p>
         </div>
         <a href="livro_create.php" class="btn btn-primary">Novo Livro</a>
 
@@ -73,5 +76,6 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
     <?php endif; ?>
 </div>
+
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

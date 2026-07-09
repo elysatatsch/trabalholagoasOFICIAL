@@ -104,6 +104,7 @@ require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="page-header">
+  
   <h2>Editar Livro</h2>
   <a href="index.php" class="btn btn-ghost">← Voltar</a>
 </div>

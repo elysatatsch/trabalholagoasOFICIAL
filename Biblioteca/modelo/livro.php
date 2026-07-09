@@ -8,7 +8,8 @@ class Livro {
     private int    $nota;
     private int    $usuarioId;
     private ?string $capa; 
-    private array  $autoresIds = []; //
+    private array  $autoresIds = []; 
+
 
     public function __construct(array $dados) {
         $this->id        = (int) ($dados['id_livro']   ?? 0);
@@ -18,6 +19,7 @@ class Livro {
         $this->usuarioId = (int)  ($dados['usuario_id'] ?? 0);
         $this->capa      =        ($dados['capa']       ?? null); 
         $this->autoresIds =       ($dados['autores_ids'] ?? []); 
+       
     }
 
     public function getId():        int    { return $this->id; }
@@ -27,6 +29,7 @@ class Livro {
     public function getUsuarioId(): int    { return $this->usuarioId; }
     public function getCapa():      ?string { return $this->capa; } 
     public function getAutoresIds(): array  { return $this->autoresIds; } 
+ 
 
     public static function novo(string $nome, int $genero, int $nota, int $usuarioId, ?string $capa = null, array $autoresIds = []): Livro {
         if ($usuarioId <= 0) {
@@ -43,6 +46,7 @@ class Livro {
         $nome = trim($nome);
         $genero = (int)$genero;
         $nota = (int)$nota;
+       
 
         if ($nome === '' || $genero <= 0) {
             throw new InvalidArgumentException('Nome do livro e gênero são obrigatórios.');
@@ -57,6 +61,7 @@ class Livro {
         $this->nota       = $nota;
         $this->capa       = $capa; 
         $this->autoresIds = $autoresIds; 
+       
     }
 
     public function registrarIdGerado(int $id): void {
@@ -66,4 +71,5 @@ class Livro {
 
         $this->id = $id;
     }
+
 }
