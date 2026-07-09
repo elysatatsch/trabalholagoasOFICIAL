@@ -1,52 +1,77 @@
 <?php
-
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../repository/PokemonRepository.php';
+require_once __DIR__ . '/../_repository/LivroRepository.php';
+require_once __DIR__ . '/../_repository/UsuarioRepository.php';
+require_once __DIR__ . '/../_repository/AutorRepository.php';
 
-$repo     = new PokemonRepository();
-$pokemons = $repo->listarPorUsuario($_SESSION['usuario_id']);
+$usuarioRepo = new UsuarioRepository();
+$livroRepo = new LivroRepository();
+$autorRepo = new AutorRepository();
+
+
+$livros = $livroRepo->listarPorUsuario($_SESSION['usuario_id']);
 
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
-<div class="page-header">
-  <h2>Meus Pokémons</h2>
-  <a href="pokemon_create.php" class="btn btn-primary">+ Novo Pokémon</a>
-</div>
+<div class="dashboard-container">
+    <div class="page-header">
+        <div>
+            <h2>Meus Livros</h2>
+            <p>Bem-vindo de volta, <strong><?= htmlspecialchars($_SESSION['usuario_nome']) ?></strong>!</p>
+        </div>
+        <a href="livro_create.php" class="btn btn-primary">Novo Livro</a>
 
-<?php if (empty($pokemons)): ?>
-  <div class="empty-state">
-    <p>Você ainda não cadastrou nenhum pokémon.</p>
-    <a href="pokemon_create.php" class="btn btn-primary">Cadastrar agora</a>
-  </div>
-<?php else: ?>
-  <div class="table-wrapper">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Nome</th>
-          <th>Tipo</th>
-          <th>Nível</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php foreach ($pokemons as $pokemon): ?>
-          <tr>
-            <td><?= $pokemon->getId() ?></td>
-            <td><strong><?= htmlspecialchars($pokemon->getNome()) ?></strong></td>
-            <td><span class="badge badge-tipo"><?= htmlspecialchars($pokemon->getTipo()) ?></span></td>
-            <td>Lv. <?= $pokemon->getNivel() ?></td>
-            <td class="acoes">
-              <a href="pokemon_edit.php?id=<?= $pokemon->getId() ?>" class="btn btn-sm btn-editar">Editar</a>
-              <a href="pokemon_delete.php?id=<?= $pokemon->getId() ?>" class="btn btn-sm btn-excluir">Excluir</a>
-            </td>
-          </tr>
-        <?php endforeach; ?>
-      </tbody>
-    </table>
-  </div>
-<?php endif; ?>
+        <a href="logoout.php" class="btn btn-secundary">Deslogar</a>
+    
+    </div>
+
+    <?php if (isset($_GET['sucesso'])): ?>
+        <div class="alert alert-sucesso">Livro cadastrado com sucesso!</div>
+    <?php endif; ?>
+    <?php if (isset($_GET['editado'])): ?>
+        <div class="alert alert-sucesso">Livro atualizado com sucesso!</div>
+    <?php endif; ?>
+    <?php if (isset($_GET['excluido'])): ?>
+        <div class="alert alert-alerta">Livro removido com sucesso.</div>
+    <?php endif; ?>
+
+    <?php if (empty($livros)): ?>
+        <div class="empty-state">
+            <p>Você ainda não tem nenhum livro cadastrado na sua estante.</p>
+            <a href="livro_create.php" class="btn btn-secondary">Começar a cadastrar</a>
+        </div>
+    <?php else: ?>
+        <div class="books-grid">
+           <?php foreach ($livros as $livro):
+
+            $autores = $autorRepo->buscarAutoresLivro($livro->getId());
+            $nomeAutor = !empty($autores)
+            ? $autores[0]->getNome()
+            : 'Autor desconhecido';
+?>
+            
+                <div class="book-card">
+                    <div class="book-cover">
+                        <?php if ($livro->getCapa()): ?>
+                            <img src="../uploads/<?= htmlspecialchars($livro->getCapa()) ?>" alt="Capa de <?= htmlspecialchars($livro->getNome()) ?>">
+                        <?php else: ?>
+                            <div class="no-cover">Sem Capa</div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="book-info">
+                        <h3 class="book-title"><?= htmlspecialchars($livro->getNome()) ?></h3>
+                        <p class="book-author">Por: <?= htmlspecialchars($nomeAutor) ?></p>
+                        <span class="book-rating">★ <?= $livro->getNota() ?> / 5</span>
+                    </div>
+                    <div class="book-actions">
+                        <a href="livro_editar.php?id_livro=<?= $livro->getId() ?>" class="btn-action btn-edit">Editar</a>
+                        <a href="livro_delete.php?id_livro=<?= $livro->getId() ?>" class="btn-action btn-delete">Excluir</a>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</div>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

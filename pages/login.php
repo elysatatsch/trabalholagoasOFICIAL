@@ -2,13 +2,7 @@
 
 session_start();
 
-// Se já estiver logado, vai direto para a página principal
-if (!empty($_SESSION['usuario_id'])) {
-    header('Location: index.php');
-    exit;
-}
-
-require_once __DIR__ . '/../repository/UsuarioRepository.php';
+require_once __DIR__ . '/../_repository/UsuarioRepository.php';
 
 $erro = '';
 $emailFormulario = $_POST['email'] ?? '';
@@ -20,10 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($email === '' || $senha === '') {
         $erro = 'Preencha todos os campos.';
     } else {
+       
         $repo    = new UsuarioRepository();
         $usuario = $repo->buscarPorEmail($email);
 
-        // Compara o hash SHA256 da senha digitada com o hash salvo no banco
+
         if ($usuario && hash('sha256', $senha) === $usuario->getSenha()) {
             $_SESSION['usuario_id']   = $usuario->getId();
             $_SESSION['usuario_nome'] = $usuario->getNome();
@@ -41,13 +36,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login — PokéCRUD</title>
+  <title>Login — Biblioteca</title>
   <link rel="stylesheet" href="../assets/style.css" />
 </head>
 <body class="login-body">
 
 <div class="login-card">
-  <div class="login-logo">PokéCRUD</div>
+  <div class="login-logo">BIBLIOTECA</div>
   <h1 class="login-title">Entrar no sistema</h1>
 
   <?php if ($erro !== ''): ?>
@@ -79,9 +74,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <button type="submit" class="btn btn-primary btn-full">Entrar</button>
-  </form>
 
+  </form>
 </div>
 
-</body>
-</html>
+<p style="text-align:center;margin-top:20px;">
+
+Ainda não possui conta?
+
+<a href="cadastro.php">
+
+Cadastre-se
+
+</a>
+
+</p>
