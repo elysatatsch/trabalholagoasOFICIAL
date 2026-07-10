@@ -3,11 +3,13 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../_repository/LivroRepository.php';
 require_once __DIR__ . '/../_repository/UsuarioRepository.php';
 require_once __DIR__ . '/../_repository/AutorRepository.php';
+require_once __DIR__ . '/../_repository/TropeRepository.php';
 
+$tropeRepo = new TropeRepository();
+$tropes = $tropeRepo->listar();
 $usuarioRepo = new UsuarioRepository();
 $livroRepo = new LivroRepository();
 $autorRepo = new AutorRepository();
-
 
 $livros = $livroRepo->listarPorUsuario($_SESSION['usuario_id']);
 
@@ -52,6 +54,7 @@ require_once __DIR__ . '/../includes/header.php';
             $nomeAutor = !empty($autores)
             ? $autores[0]->getNome()
             : 'Autor desconhecido';
+            $tropes = $tropeRepo->buscarTropesLivro($livro->getId());
 ?>
             
                 <div class="book-card">
@@ -65,6 +68,16 @@ require_once __DIR__ . '/../includes/header.php';
                     <div class="book-info">
                         <h3 class="book-title"><?= htmlspecialchars($livro->getNome()) ?></h3>
                         <p class="book-author">Por: <?= htmlspecialchars($nomeAutor) ?></p>
+                    </div>
+
+    <div class="book-tropes">
+        <?php foreach($tropes as $trope): ?>
+            <span class="badge">
+                <?= htmlspecialchars($trope['trope']) ?>
+            </span>
+        <?php endforeach; ?>
+    </div>
+                    <div class="book-info">
                         <span class="book-rating">★ <?= $livro->getNota() ?> / 5</span>
                     </div>
                     <div class="book-actions">

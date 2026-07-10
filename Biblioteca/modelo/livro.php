@@ -9,6 +9,7 @@ class Livro {
     private int    $usuarioId;
     private ?string $capa; 
     private array  $autoresIds = []; 
+    private array $tropeIds=[];
 
 
     public function __construct(array $dados) {
@@ -19,6 +20,7 @@ class Livro {
         $this->usuarioId = (int)  ($dados['usuario_id'] ?? 0);
         $this->capa      =        ($dados['capa']       ?? null); 
         $this->autoresIds =       ($dados['autores_ids'] ?? []); 
+        $this->tropeIds=           $dados['trope_ids'] ?? [];
        
     }
 
@@ -29,20 +31,21 @@ class Livro {
     public function getUsuarioId(): int    { return $this->usuarioId; }
     public function getCapa():      ?string { return $this->capa; } 
     public function getAutoresIds(): array  { return $this->autoresIds; } 
+    public function getTropeIds(): array {return $this->tropeIds;}
  
 
-    public static function novo(string $nome, int $genero, int $nota, int $usuarioId, ?string $capa = null, array $autoresIds = []): Livro {
+    public static function novo(string $nome, int $genero, int $nota, int $usuarioId, ?string $capa = null, array $autoresIds = [], array $tropeIds=[]): Livro {
         if ($usuarioId <= 0) {
             throw new InvalidArgumentException('Usuário inválido.');
         }
 
         $livro = new Livro(['usuario_id' => $usuarioId]);
-        $livro->alterarDados($nome, $genero, $nota, $capa, $autoresIds);
-
+        $livro->alterarDados($nome, $genero, $nota, $capa, $autoresIds, $tropeIds);
         return $livro;
+        
     }
 
-    public function alterarDados(string $nome, int $genero, int $nota, ?string $capa = null, array $autoresIds = []): void {
+    public function alterarDados(string $nome, int $genero, int $nota, ?string $capa = null, array $autoresIds = [], array $tropeIds=[]): void {
         $nome = trim($nome);
         $genero = (int)$genero;
         $nota = (int)$nota;
@@ -61,7 +64,8 @@ class Livro {
         $this->nota       = $nota;
         $this->capa       = $capa; 
         $this->autoresIds = $autoresIds; 
-       
+        $this->tropeIds = $tropeIds; 
+
     }
 
     public function registrarIdGerado(int $id): void {

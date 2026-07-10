@@ -1,7 +1,4 @@
--- ============================================================
---  PokéCRUD — Script de criação do banco de dados
---  Execute este arquivo no phpMyAdmin ou via terminal MySQL
--- ============================================================
+
 
 CREATE DATABASE IF NOT EXISTS biblioteca
   CHARACTER SET utf8mb4
@@ -9,9 +6,7 @@ CREATE DATABASE IF NOT EXISTS biblioteca
 
 USE biblioteca;
 
--- ------------------------------------------------------------
---  Tabela de usuários
--- ------------------------------------------------------------
+
 CREATE TABLE IF NOT EXISTS usuario (
     id_usuario       INT          NOT NULL AUTO_INCREMENT,
     nome      VARCHAR(100) NOT NULL,
@@ -22,9 +17,6 @@ CREATE TABLE IF NOT EXISTS usuario (
     UNIQUE KEY uq_email (email),
 ) ENGINE=InnoDB;
 
--- ------------------------------------------------------------
---  Tabela de pokémons
--- ------------------------------------------------------------
 
 
 CREATE TABLE IF NOT EXISTS autor(
@@ -59,20 +51,18 @@ create table IF NOT EXISTS livro_autor(
 )ENGINE=InnoDB;
 
 create table IF NOT EXISTS tropes(
-    tropes varchar(200),
-    id_trope int primary KEY,
+    trope varchar(200),
+    id_trope int AUTO_INCREMENT primary KEY 
+)ENGINE=InnoDB;
+
+create table if not exists livro_trope(
     livro_id int,
-    genero_id int,
+    tropes_id int,
     FOREIGN KEY (livro_id) REFERENCES livro(id_livro) ON DELETE CASCADE,
-    FOREIGN KEY (genero_id) REFERENCES genero(id_genero) ON DELETE CASCADE  
+    FOREIGN KEY (tropes_id) REFERENCES tropes(id_trope) ON DELETE CASCADE  
 )ENGINE=InnoDB;
 
 
--- ------------------------------------------------------------
---  Usuário de teste
---  Email: admin@email.com
---  Senha: 123456  (SHA256 = 8d969eef6ecad3c29a3a629280e686cf...)
--- ------------------------------------------------------------
 INSERT INTO usuario (nome, email, senha) VALUES
 (
     'elysa',
@@ -80,20 +70,24 @@ INSERT INTO usuario (nome, email, senha) VALUES
     SHA2('1234567',256)
 );
 
--- ------------------------------------------------------------
---  Pokémons de exemplo vinculados ao usuário acima (id=1)
--- ------------------------------------------------------------
 INSERT INTO genero(nome_genero)
 VALUES
 ('Romance'),
-('Terror'),
-('Ficção');
+('Terror/Horror'),
+('Ficção')
+('fantasia'),
+('suspense'),
+('Biografia')
+('Poema'),
+('HQ/mangá');
 
-INSERT INTO autor(nome_autor)
-VALUES
-('Machado de Assis'),
-('Stephen King'),
-('J.K Rowling');
-
-ALTER TABLE livro
-ADD status ENUM('lido','lendo','quero_ler','favorito') DEFAULT 'quero_ler';
+INSERT INTO tropes (tropes) VALUES
+('enimes to lovers'),
+('friends to lovers'),
+('Slow burn'),
+('Only one bed'),
+('Grumpy x Sunshine'),
+('Clássico'),
+('auto ajuda'),
+('melancólico'),
+('comedia');

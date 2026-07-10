@@ -1,35 +1,36 @@
 /* ============================================================
-   BIBLIOTECA — tema inspirado no Letterboxd
-   Fundo grafite-petroleo, cartaz em grade, selos de leitura
-   em verde / laranja / azul, como as avaliacoes do Letterboxd.
+   BIBLIOTECA — tema inspirado no Spotify
+   Preto quase puro, verde vibrante, cartoes com "play button"
+   flutuante, botoes em formato de pilula.
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 :root {
   /* --- superficies --- */
-  --bg:            #14181C;   /* fundo geral - grafite petroleo */
-  --bg-raised:     #1D2429;   /* cabecalhos, footer, empty-state */
-  --card:          #2C3440;   /* cards / posteres */
-  --card-hover:    #3A4452;
-  --border:        #3A4452;
-  --border-soft:   #232B31;
+  --bg:            #121212;   /* fundo geral - preto Spotify */
+  --bg-raised:     #181818;   /* cabecalhos, footer, empty-state */
+  --card:          #181818;   /* cards */
+  --card-hover:    #282828;   /* hover de card */
+  --border:        #282828;
+  --border-soft:   #2A2A2A;
 
-  /* --- as tres cores de avaliacao, como no Letterboxd --- */
-  --green:         #00E054;   /* lido / concluido */
-  --orange:        #FF8000;   /* lendo / em progresso */
-  --blue:          #40BCF4;   /* quero ler / watchlist */
-  --pink:          #FF5A79;   /* favorito */
+  /* --- paleta Spotify --- */
+  --green:         #1DB954;   /* verde de marca - lido / play */
+  --green-bright:  #1ED760;   /* hover do verde */
+  --gold:          #F5C518;   /* lendo / destaque secundario */
+  --blue:          #509BF5;   /* quero ler */
+  --pink:          #F037A5;   /* favorito - como a capa de "Musicas Curtidas" */
 
-  --red:           #FF4C4C;   /* acao destrutiva (excluir) */
-  --gold:          #F5C518;   /* nota / rating */
+  --red:           #F15E6C;   /* acao destrutiva (excluir) */
 
   --text:          #FFFFFF;
-  --text-dim:      #9AB;
-  --text-faint:    #667788;
+  --text-dim:      #B3B3B3;
+  --text-faint:    #6A6A6A;
 
-  --shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.7);
-  --radius: 6px;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --radius: 8px;
+  --radius-pill: 500px;
 }
 
 * {
@@ -48,8 +49,8 @@ body {
   line-height: 1.5;
 }
 
-a { color: var(--blue); text-decoration: none; }
-a:hover { color: #6cd0ff; }
+a { color: var(--text); text-decoration: none; }
+a:hover { color: var(--green-bright); text-decoration: underline; }
 
 /* ------------------------------------------------------------
    Login / cadastro
@@ -57,66 +58,53 @@ a:hover { color: #6cd0ff; }
 .login-body {
   justify-content: center;
   align-items: center;
-  background:
-    radial-gradient(circle at 20% 15%, rgba(0, 224, 84, 0.12), transparent 40%),
-    radial-gradient(circle at 80% 85%, rgba(255, 128, 0, 0.10), transparent 40%),
-    var(--bg);
+  background: radial-gradient(120% 120% at 50% -10%, #1a2e20 0%, var(--bg) 55%);
   padding: 40px 16px;
 }
 
 .login-card {
   background: var(--bg-raised);
-  border: 1px solid var(--border-soft);
   padding: 40px;
-  border-radius: 8px;
+  border-radius: var(--radius);
   box-shadow: var(--shadow);
   width: 100%;
   max-width: 400px;
 }
 
-/* marca - tres circulos sobrepostos, como o logotipo do Letterboxd */
 .login-logo {
-  position: relative;
-  font-size: 22px;
-  font-weight: 800;
+  font-size: 24px;
+  font-weight: 900;
   text-align: center;
   color: var(--text);
-  margin-bottom: 14px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  padding-top: 34px;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
 }
 
 .login-logo::before {
   content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 46px;
-  height: 20px;
-  transform: translateX(-50%);
-  background:
-    radial-gradient(circle at 30% 50%, var(--green) 0 9px, transparent 9.5px),
-    radial-gradient(circle at 50% 50%, var(--orange) 0 9px, transparent 9.5px),
-    radial-gradient(circle at 70% 50%, var(--blue) 0 9px, transparent 9.5px);
-  opacity: 0.95;
-  mix-blend-mode: screen;
+  display: block;
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--green-bright), var(--green) 70%);
+  position: relative;
 }
 
 .login-title {
   font-size: 14px;
   text-align: center;
-  color: var(--text-faint);
+  color: var(--text-dim);
   margin-bottom: 30px;
+  font-weight: 500;
 }
 
 .login-card h1 {
   font-size: 14px;
   text-align: center;
-  color: var(--text-faint);
+  color: var(--text-dim);
   font-weight: 500;
   margin-bottom: 30px;
-  text-transform: none;
 }
 
 /* ------------------------------------------------------------
@@ -132,10 +120,10 @@ a:hover { color: #6cd0ff; }
 .form-card, .confirm-card {
   background: var(--bg-raised);
   padding: 30px;
-  border-radius: 8px;
+  border-radius: var(--radius);
   box-shadow: var(--shadow);
   max-width: 600px;
-  border: 1px solid var(--border-soft);
+  border: 1px solid var(--border);
 }
 
 .page-header {
@@ -143,37 +131,35 @@ a:hover { color: #6cd0ff; }
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
-  border-bottom: 3px solid var(--green);
   padding-bottom: 15px;
+  border-bottom: 1px solid var(--border);
 }
 
 .page-header h2 {
   color: var(--text);
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 800;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  letter-spacing: -0.02em;
 }
 
 .titulo-pagina {
-  font-size: 2.3rem;
-  font-weight: 800;
+  font-size: 2.4rem;
+  font-weight: 900;
   color: var(--text);
   text-align: center;
   margin: 30px 0;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  letter-spacing: -0.02em;
   position: relative;
 }
 
 .titulo-pagina::after {
   content: "";
   display: block;
-  width: 90px;
-  height: 4px;
-  background: linear-gradient(90deg, var(--green), var(--orange), var(--blue));
+  width: 48px;
+  height: 5px;
+  background: var(--green);
   margin: 14px auto 0;
-  border-radius: 5px;
+  border-radius: var(--radius-pill);
 }
 
 /* ------------------------------------------------------------
@@ -183,12 +169,12 @@ a:hover { color: #6cd0ff; }
 
 .form-group label {
   display: block;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 8px;
-  font-size: 13px;
-  letter-spacing: 0.03em;
+  font-size: 12px;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--text-faint);
+  color: var(--text-dim);
 }
 
 .form-group input[type="text"],
@@ -198,10 +184,10 @@ a:hover { color: #6cd0ff; }
 .form-group input[type="file"],
 .form-group select {
   width: 100%;
-  padding: 12px;
+  padding: 13px 14px;
   border: 1px solid var(--border);
-  border-radius: 6px;
-  background: #10151A;
+  border-radius: 4px;
+  background: #2A2A2A;
   color: var(--text);
   font-size: 15px;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -210,8 +196,8 @@ a:hover { color: #6cd0ff; }
 .form-group input::placeholder { color: var(--text-faint); }
 
 .form-group input:focus, .form-group select:focus {
-  border-color: var(--green);
-  box-shadow: 0 0 0 3px rgba(0, 224, 84, 0.18);
+  border-color: var(--text);
+  box-shadow: 0 0 0 1px var(--text);
   outline: none;
 }
 
@@ -226,54 +212,55 @@ select {
 }
 
 /* ------------------------------------------------------------
-   Botoes
+   Botoes — pilulas, como o Spotify
    ------------------------------------------------------------ */
 .btn {
   display: inline-block;
-  padding: 10px 22px;
-  border-radius: 6px;
+  padding: 12px 32px;
+  border-radius: var(--radius-pill);
   font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.02em;
   text-decoration: none;
   cursor: pointer;
-  border: none;
-  transition: background 0.2s, transform 0.1s, color 0.2s;
+  border: 1px solid transparent;
+  transition: background 0.15s, transform 0.1s, color 0.15s;
   text-align: center;
 }
 
-.btn:active { transform: translateY(1px); }
+.btn:hover { transform: scale(1.04); }
+.btn:active { transform: scale(0.98); }
 
 .btn-primary {
   background-color: var(--green);
-  color: #06210F;
+  color: #041D0F;
 }
-.btn-primary:hover { background-color: #00c94a; }
+.btn-primary:hover { background-color: var(--green-bright); }
 
 .btn-secondary {
-  background-color: var(--card);
+  background-color: var(--card-hover);
   color: var(--text);
 }
-.btn-secondary:hover { background-color: var(--card-hover); }
+.btn-secondary:hover { background-color: #3A3A3A; }
 
 .btn-ghost {
   background: transparent;
   color: var(--text-dim);
-  border: 1px solid var(--border);
+  border-color: #4D4D4D;
 }
 .btn-ghost:hover {
-  border-color: var(--text-dim);
+  border-color: var(--text);
   color: var(--text);
+  transform: scale(1.04);
 }
 
-.btn-full { width: 100%; padding: 14px; font-size: 14px; }
+.btn-full { width: 100%; padding: 15px; font-size: 15px; }
 
 .btn-excluir {
   background-color: var(--red);
-  color: #2A0A0A;
+  color: #2B0808;
 }
-.btn-excluir:hover { background-color: #e63e3e; }
+.btn-excluir:hover { background-color: #ff7580; }
 
 .form-actions {
   display: flex;
@@ -282,7 +269,7 @@ select {
 }
 
 /* ------------------------------------------------------------
-   Estantes e grade de livros (estilo grade de posteres)
+   Estantes e grade de livros
    ------------------------------------------------------------ */
 .shelf { margin-bottom: 50px; }
 
@@ -291,70 +278,84 @@ select {
   font-weight: 800;
   color: var(--text);
   margin-bottom: 20px;
-  border-left: 6px solid var(--green);
-  padding-left: 15px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: -0.01em;
 }
 
 .books-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 25px;
+  gap: 22px;
   margin-top: 20px;
 }
 
 .book-card {
   position: relative;
-  background: #000;
+  background: var(--card);
   border-radius: var(--radius);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--border-soft);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid transparent;
+  padding: 14px 14px 0;
+  transition: background 0.25s ease, transform 0.2s ease;
 }
 
 .book-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.55);
+  background: var(--card-hover);
+  transform: translateY(-2px);
 }
 
 .book-cover {
-  height: 280px;
-  background: var(--card);
+  height: 220px;
+  background: #2A2A2A;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   position: relative;
+  border-radius: 6px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
 .book-cover img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.35s ease, filter 0.25s ease;
+  transition: filter 0.25s ease;
 }
 
 .book-card:hover .book-cover img {
-  transform: scale(1.06);
-  filter: brightness(0.55);
+  filter: brightness(0.65);
 }
 
-/* sobreposicao que aparece por cima da capa ao passar o mouse,
-   como o hover de poster do Letterboxd */
+/* botao de "play" verde flutuante, como no hover de album do Spotify */
 .book-cover::after {
-  content: "";
+  content: "▶";
   position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.85) 100%);
+  bottom: 10px;
+  right: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--green);
+  color: #041D0F;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  padding-left: 3px;
   opacity: 0;
-  transition: opacity 0.25s ease;
+  transform: translateY(8px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
+  transition: opacity 0.2s ease, transform 0.2s ease, background 0.15s ease;
 }
 
-.book-card:hover .book-cover::after { opacity: 1; }
+.book-card:hover .book-cover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.book-cover:hover::after { background: var(--green-bright); }
 
 .no-cover {
   color: var(--text-faint);
@@ -364,9 +365,8 @@ select {
 }
 
 .book-info {
-  padding: 15px;
+  padding: 14px 2px 16px;
   flex-grow: 1;
-  background: var(--card);
 }
 
 .book-title {
@@ -381,28 +381,28 @@ select {
 
 .book-author {
   font-size: 13px;
-  color: var(--text-faint);
+  color: var(--text-dim);
   margin-bottom: 10px;
 }
 
-/* nota exibida como pilula dourada, referencia ao rating do Letterboxd */
+/* nota exibida como pilula verde, estilo "seguindo" do Spotify */
 .book-rating {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: rgba(245, 197, 24, 0.12);
-  color: var(--gold);
+  background: rgba(29, 185, 84, 0.14);
+  color: var(--green-bright);
   padding: 3px 10px;
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
   font-size: 12px;
   font-weight: bold;
 }
 
-/* Selos de status - mapeados as tres cores de avaliacao */
+/* Selos de status */
 .status-badge {
   display: inline-block;
   padding: 3px 10px;
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
   font-size: 11px;
   font-weight: 700;
   margin-right: 6px;
@@ -411,29 +411,30 @@ select {
 }
 
 .status-lido {
-  background: rgba(0, 224, 84, 0.14);
-  color: var(--green);
+  background: rgba(29, 185, 84, 0.16);
+  color: var(--green-bright);
 }
 
 .status-lendo {
-  background: rgba(255, 128, 0, 0.14);
-  color: var(--orange);
+  background: rgba(245, 197, 24, 0.16);
+  color: var(--gold);
 }
 
 .status-quero-ler {
-  background: rgba(64, 188, 244, 0.14);
+  background: rgba(80, 155, 245, 0.16);
   color: var(--blue);
 }
 
 .status-favorito {
-  background: rgba(255, 90, 121, 0.14);
+  background: rgba(240, 55, 165, 0.16);
   color: var(--pink);
 }
 
 .book-actions {
   display: flex;
   border-top: 1px solid var(--border-soft);
-  background: var(--card);
+  margin: 0 -14px;
+  padding: 0 14px;
 }
 
 .btn-action {
@@ -442,21 +443,17 @@ select {
   padding: 12px;
   text-decoration: none;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  transition: background 0.15s, color 0.15s;
+  transition: color 0.15s;
 }
 
-.btn-edit { color: var(--blue); }
-.btn-edit:hover { background: rgba(64, 188, 244, 0.1); }
+.btn-edit:hover { color: var(--blue); }
 
 .btn-delete {
-  color: var(--red);
   border-left: 1px solid var(--border-soft);
 }
-.btn-delete:hover { background: rgba(255, 76, 76, 0.1); }
+.btn-delete:hover { color: var(--red); }
 
 /* ------------------------------------------------------------
    Alertas
@@ -470,15 +467,15 @@ select {
 }
 
 .alert-erro, .alert-alerta {
-  background-color: rgba(255, 76, 76, 0.1);
-  color: #FF8080;
-  border: 1px solid rgba(255, 76, 76, 0.3);
+  background-color: rgba(241, 94, 108, 0.1);
+  color: var(--red);
+  border: 1px solid rgba(241, 94, 108, 0.3);
 }
 
 .alert-sucesso {
-  background-color: rgba(0, 224, 84, 0.1);
-  color: var(--green);
-  border: 1px solid rgba(0, 224, 84, 0.3);
+  background-color: rgba(29, 185, 84, 0.1);
+  color: var(--green-bright);
+  border: 1px solid rgba(29, 185, 84, 0.3);
 }
 
 /* ------------------------------------------------------------
@@ -488,8 +485,8 @@ select {
   text-align: center;
   padding: 60px;
   background: var(--bg-raised);
-  border-radius: 8px;
-  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
   color: var(--text-faint);
 }
 
@@ -497,6 +494,26 @@ select {
   margin-bottom: 20px;
   font-size: 16px;
   color: var(--text-dim);
+}
+
+/* ------------------------------------------------------------
+   Tropos / badges extras
+   ------------------------------------------------------------ */
+.book-trope {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: var(--card-hover);
+  color: var(--text);
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 700;
 }
 
 /* ------------------------------------------------------------

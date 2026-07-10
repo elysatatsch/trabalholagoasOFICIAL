@@ -4,11 +4,13 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../_repository/LivroRepository.php';
 require_once __DIR__ . '/../_repository/GeneroRepository.php';
 require_once __DIR__ . '/../_repository/AutorRepository.php';
+require_once __DIR__ . '/../_repository/TropeRepository.php';
 require_once __DIR__ . '/../modelo/livro.php';
 require_once __DIR__ . '/../modelo/autor.php';
 
+$repoTrope = new TropeRepository();
+$tropes = $repoTrope->listar();
 $repo = new LivroRepository();
-
 $repoGenero = new GeneroRepository();
 $generos = $repoGenero->listar();
 $repoAutor = new AutorRepository();
@@ -26,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $genero        = (int)($_POST['genero'] ?? 0);
     $nota          = (int)($_POST['nota'] ?? 1);
     $autorDigitado = trim($_POST['nome_autor'] ?? '');
-    $status = $_POST['status'] ?? 'quero_ler';
+    $tropeSelecionadas = $_POST['tropes'] ?? [];
 
     $nome_arquivo_salvo = null;
 
@@ -70,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
 
        
-        $livro = Livro::novo($nome, $genero, $nota, $_SESSION['usuario_id'], $nome_arquivo_salvo, [$autorId]);
+        $livro = Livro::novo($nome, $genero, $nota, $_SESSION['usuario_id'], $nome_arquivo_salvo, [$autorId], $tropeSelecionadas);
         $repo->salvar($livro);
 
         header('Location: index.php?sucesso=1');
@@ -141,6 +143,23 @@ require_once __DIR__ . '/../includes/header.php';
             <?php endforeach; ?>
         </select>
     </div>
+
+    <div class="form-group">
+  <label>Tropes</label>
+
+  <?php foreach($tropes as $trope): ?>
+
+  <label>
+
+      <input
+        type="checkbox"
+          name="tropes[]"
+            value="<?= $trope['id_trope'] ?>">
+              <?= htmlspecialchars($trope['trope']) ?>
+    </label>
+  <?php endforeach; ?>
+
+</div>
 
     <div class="form-group">
       <label for="nota">Nota (1 – 5)</label>

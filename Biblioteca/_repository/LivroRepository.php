@@ -41,6 +41,17 @@ class LivroRepository {
             $stmtAutores->execute([':id' => $id]);
             $dados['autores_ids'] = $stmtAutores->fetchAll(PDO::FETCH_COLUMN);
 
+            $stmtTropes = $this->pdo->prepare(
+            "SELECT tropes_id
+            FROM livro_trope
+            WHERE livro_id=:id");
+
+            $stmtTropes->execute([
+            ':id'=>$id
+]);
+
+$dados['tropes_ids']=$stmtTropes->fetchAll(PDO::FETCH_COLUMN);
+
             return new Livro($dados);
         }
 
@@ -65,7 +76,15 @@ class LivroRepository {
             $stmtDel = $this->pdo->prepare('DELETE FROM livro_autor WHERE livro_id = :id');
             $stmtDel->execute([':id' => $livro->getId()]);
 
+            $stmtDelTropes = $this->pdo->prepare('DELETE FROM livro_trope WHERE livro_id = :id');
+            $stmtDelTropes->execute([':id' => $livro->getId()
+
+            
+]);
+
             $this->salvarAutoresVinculados($livro->getId(), $livro->getAutoresIds());
+            $this->salvarTropesVinculadas($livro->getId(),$livro->getTropeIds()
+);
             return;
         }
 
@@ -89,7 +108,13 @@ class LivroRepository {
         $livro->registrarIdGerado($livroIdGerado);
 
         $this->salvarAutoresVinculados($livroIdGerado, $livro->getAutoresIds());
+        $this->salvarTropesVinculadas(
+        $livroIdGerado,
+        $livro->getTropeIds()
+);
     }
+
+    
 
     private function salvarAutoresVinculados(int $livroId, array $autoresIds): void {
         if (empty($autoresIds)) return;
@@ -104,21 +129,22 @@ class LivroRepository {
                 ':autor_id' => (int)$autorId
             ]);
         }
+    
     }
-
-    public function inserir(string $nome, int $genero, int $nota, int $usuarioId, ?string $capa = null, array $autoresIds = []): void {
-        $livro = Livro::novo($nome, $genero, $nota, $usuarioId, $capa, $autoresIds);
+ 
+    public function inserir(string $nome, int $genero, int $nota, int $usuarioId, ?string $capa = null, array $autoresIds = [], array $tropesIds = []): void {
+        $livro = Livro::novo($nome, $genero, $nota, $usuarioId, $capa, $autoresIds, $tropesIds);
         $this->salvar($livro);
     }
 
-    public function atualizar(int $id, string $nome, int $genero, int $nota, ?string $capa = null, array $autoresIds = []): void {
+    public function atualizar(int $id, string $nome, int $genero, int $nota, ?string $capa = null, array $autoresIds = [], array $tropesIds = []): void {
         $livro = $this->buscarPorId($id);
 
         if ($livro === null) {
             throw new RuntimeException('Livro não encontrado.');
         }
 
-        $livro->alterarDados($nome, $genero, $nota, $capa, $autoresIds);
+        $livro->alterarDados($nome, $genero, $nota, $capa, $autoresIds, $tropesIds);
         $this->salvar($livro);  
     }
 
@@ -127,4 +153,24 @@ class LivroRepository {
         $stmt = $this->pdo->prepare('DELETE FROM livro WHERE id_livro = :id_livro');
         $stmt->execute([':id_livro' => $id]);
     }
+
+     public function salvarTropesVinculadas(int $livroId, array $tropes){
+        if(empty($tropes))
+        return;
+
+        $stmt=$this->pdo->prepare(
+        "INSERT INTO livro_trope
+        (livro_id,tropes_id)
+        VALUES
+        (:livro,:trope)");
+
+        foreach($tropes as $trope){
+
+         $stmt->execute([
+            ':livro'=>$livroId,
+            ':trope'=>$trope
+        ]);
+
+    }
+}
 }

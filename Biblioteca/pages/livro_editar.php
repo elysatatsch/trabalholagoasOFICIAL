@@ -4,6 +4,7 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../_repository/LivroRepository.php';
 require_once __DIR__ . '/../_repository/GeneroRepository.php';
 require_once __DIR__ . '/../_repository/AutorRepository.php';
+require_once __DIR__ . '/../_repository/TropeRepository.php';
 
 $repo = new LivroRepository();
 $repoAutor = new AutorRepository();
@@ -26,6 +27,10 @@ if ($livro === null || $livro->getUsuarioId() !== $_SESSION['usuario_id']) {
     exit;
 }
 
+$repoTrope = new TropeRepository();
+$tropes = $repoTrope->listar();
+$tropesSelecionadas = $livro->getTropeIds();
+
 $erro = '';
 $nome = $livro->getNome();
 $genero = $livro->getGenero();
@@ -40,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $genero = (int)($_POST['genero'] ?? '');
     $nota   = (int) ($_POST['nota'] ?? 1);
     $autorNomeDigitado = trim($_POST['nome_autor'] ?? '');
+    $tropesSelecionadas = $_POST['tropes'] ?? [];
 
     
     $nome_arquivo_salvo = $livro->getCapa(); 
@@ -87,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $autorId = $novoAutor->getId();
 
        
-        $livro->alterarDados($nome, $genero, $nota, $nome_arquivo_salvo, [$autorId]);
+        $livro->alterarDados($nome, $genero, $nota, $nome_arquivo_salvo, [$autorId],  $tropesSelecionadas);
         
         
         $repo->salvar($livro);
@@ -153,6 +159,23 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 
     <div class="form-group">
+    <label>Tropes</label>
+    <?php foreach ($tropes as $trope): ?>
+        <label>
+            <input
+                type="checkbox"
+                name="tropes[]"
+                value="<?= $trope['id_trope'] ?>"
+                <?= in_array($trope['id_trope'], $tropesSelecionadas) ? 'checked' : '' ?>
+            >
+            <?= htmlspecialchars($trope['trope']) ?>
+        </label>
+        
+    <?php endforeach; ?>
+
+</div>
+
+    <div class="form-group">
       <label for="nota">Nota (1 – 5)</label>
       <input
         type="number"
@@ -166,7 +189,7 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 
     <div class="form-group">
-      <label>Capa Atual:</label><br>
+      <label>Capa Atual:</label>
       <?php if ($livro->getCapa()): ?>
          <img src="../public/uploads/<?= htmlspecialchars($livro->getCapa()) ?>" width="120" style="border-radius: 4px; margin-bottom: 10px;"><br>
       <?php else: ?>
